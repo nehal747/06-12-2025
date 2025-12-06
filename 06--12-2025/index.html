@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Premium Visual Gallery</title>
+    <style>
+        /* GLOBAL RESET */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #0d0f14;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* HEADER */
+        header {
+            width: 100%;
+            padding: 40px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            backdrop-filter: blur(16px);
+        }
+
+        header h1 {
+            font-size: 28px;
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, #7ee8fa, #eec0c6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        nav a {
+            margin-left: 25px;
+            text-decoration: none;
+            color: #bbb;
+            font-size: 15px;
+            transition: 0.3s;
+        }
+
+        nav a:hover {
+            color: #fff;
+        }
+
+        /* HERO SECTION */
+        .hero {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+            padding: 0 10%;
+            background: url('https://images.unsplash.com/photo-1501785888041-af3ef285b470') center/cover no-repeat;
+            position: relative;
+
+        }
+
+        .hero h2 {
+            font-size: 55px;
+            max-width: 800px;
+            line-height: 1.2;
+            background: linear-gradient(90deg, #7ee8fa, #eec0c6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            max-width: 620px;
+            color: #ccc;
+            font-size: 18px;
+        }
+
+        /* GALLERY GRID */
+        .gallery-section {
+            padding: 120px 8% 80px;
+        }
+
+        .section-title {
+            font-size: 32px;
+            margin-bottom: 30px;
+            text-align: center;
+            background: linear-gradient(90deg, #ff9a9e, #fad0c4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 18px;
+            height: 330px;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.35);
+            cursor: pointer;
+            transition: 0.4s ease;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 35px rgba(0, 0, 0, 0.55);
+        }
+
+        .card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.4s ease;
+        }
+
+        .card:hover img {
+            filter: brightness(0.7) saturate(1.3);
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 40px 0;
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        /* MODAL BASE */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal:target {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #1a1c22;
+            padding: 25px;
+            border-radius: 18px;
+            max-width: 700px;
+            width: 90%;
+            text-align: center;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(25px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-content img {
+            width: 100%;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 32px;
+            text-decoration: none;
+            color: #fff;
+        }
+
+        /* NEXT/PREV BUTTONS */
+        .nav-btn {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 18px;
+            background: #ffffff20;
+            border-radius: 10px;
+            text-decoration: none;
+            color: #fff;
+            transition: 0.3s;
+        }
+
+        .nav-btn:hover {
+            background: #ffffff40;
+        }
+
+        /* LIGHT MODE */
+        body.light {
+            background: #f3f3f7;
+            color: #111;
+        }
+
+        body.light header h1 {
+            -webkit-text-fill-color: #111;
+        }
+
+        body.light .modal-content {
+            background: #fff;
+            color: #111;
+        }
+
+        body.light .card:hover img {
+            filter: brightness(0.85);
+        }
+
+        .theme-toggle {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: #ffffff30;
+            padding: 12px 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>VisualWorld</h1>
+        <nav>
+            <a href="#">Home</a>
+            <a href="#gallery">Gallery</a>
+            <a href="#contact">Contact</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h2>Discover Beautiful & Inspiring Visuals From Around the World</h2>
+        <p>Explore a premium collection of high‑quality images, carefully selected to make your viewing experience
+            relaxing and visually satisfying.</p>
+    </section>
+
+    <section id="gallery" class="gallery-section">
+        <h3 class="section-title">Featured Visual Gallery</h3>
+        <div class="gallery">
+            <a href="#img1" class="card"><img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee"
+                    alt="image"></a>
+            <a href="#img2" class="card"><img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb"
+                    alt="image"></a>
+            <a href="#img3" class="card"><img src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e"
+                    alt="image"></a>
+            <a href="#img4" class="card"><img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e"
+                    alt="image"></a>
+            <a href="#img5" class="card"><img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470"
+                    alt="image"></a>
+            <a href="#img6" class="card"><img src="https://images.unsplash.com/photo-1499084732479-de2c02d45fc4"
+                    alt="image"></a>
+            <a href="#img7" class="card"><img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e"
+                    alt="image"></a>
+            <a href="#img8" class="card"><img src="https://images.unsplash.com/photo-1521295121783-8a321d551ad2"
+                    alt="image"></a>
+            <a href="#img9" class="card"><img src="https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1"
+                    alt="image"></a>
+            <a href="#img10" class="card"><img src="https://images.unsplash.com/photo-1523413651479-597eb2da0ad6"
+                    alt="image"></a>
+            <a href="#img11" class="card"><img src="https://images.unsplash.com/photo-1493558103817-58b2924bce98"
+                    alt="image"></a>
+            <a href="#img12" class="card"><img src="https://images.unsplash.com/photo-1519817650390-64a93db511aa"
+                    alt="image"></a>
+            <a href="#img13" class="card"><img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470"
+                    alt="image"></a>
+            <a href="#img14" class="card"><img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e"
+                    alt="image"></a>
+            <a href="#img15" class="card"><img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470"
+                    alt="image"></a>
+            <a href="#img16" class="card"><img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e"
+                    alt="image"></a>
+            <a href="#img17" class="card"><img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee"
+                    alt="image"></a>
+            <a href="#img18" class="card"><img src="https://images.unsplash.com/photo-1482192596544-9eb780fc7f66"
+                    alt="image"></a>
+            <a href="#img19" class="card"><img src="https://images.unsplash.com/photo-1503264116251-35a269479413"
+                    alt="image"></a>
+            <a href="#img20" class="card"><img src="https://images.unsplash.com/photo-1502082553048-f009c37129b9"
+                    alt="image"></a>
+            <a href="#img21" class="card"><img src="https://images.unsplash.com/photo-1519681393784-d120267933ba"
+                    alt="image"></a>
+            <a href="#img22" class="card"><img src="https://images.unsplash.com/photo-1491553895911-0055eca6402d"
+                    alt="image"></a>
+            <a href="#img23" class="card"><img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb"
+                    alt="image"></a>
+            <a href="#img24" class="card"><img src="https://images.unsplash.com/photo-1499084732479-de2c02d45fc4"
+                    alt="image"></a>
+            <a href="#img25" class="card"><img src="https://images.unsplash.com/photo-1499084732479-de2c02d45fc4"
+                    alt="image"></a>
+        </div>
+
+        <!-- MODALS USING PURE CSS -->
+        <div id="img1" class="modal">
+            <div class="modal-content">
+                <a href="#gallery" class="close">×</a>
+                <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee">
+                <p><strong>Location:</strong> Swiss Alps<br><strong>Weather:</strong> Cold, misty, calm
+                    breeze<br><strong>Highlights:</strong> Perfect for hiking, photography, and peaceful sightseeing.
+                </p>
+            </div>
+        </div>
+
+        <div id="img2" class="modal">
+            <div class="modal-content">
+                <a href="#gallery" class="close">×</a>
+                <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb">
+                <p>Peaceful mountains with sunlight reflecting on clouds.<br><strong>Location:</strong> Banff National
+                    Park, Canada<br><strong>Weather:</strong> Cool & sunny<br><strong>Facilities:</strong> Viewpoints,
+                    resting spots, guided tours.</p>
+            </div>
+        </div>
+
+        <div id="img3" class="modal">
+            <div class="modal-content">
+                <a href="#gallery" class="close">×</a>
+                <img src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e">
+                <p>Calm forest path surrounded by mist.<br><strong>Location:</strong> Amazon Rainforest
+                    Trail<br><strong>Weather:</strong> Humid, misty<br><strong>Facilities:</strong> Guided walks,
+                    wildlife viewing, rest huts.</p>
+            </div>
+        </div>
+
+        <div id="img4" class="modal">
+            <div class="modal-content">
+                <a href="#gallery" class="close">×</a>
+                <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e">
+                <p>A golden sunset shining on vast landscapes.<br><strong>Location:</strong> Sahara Desert
+                    Edge<br><strong>Weather:</strong> Warm, dry breeze<br><strong>Highlights:</strong> Camel rides,
+                    sunset view platforms, camp experience.</p>
+            </div>
+        </div>
+
+        <div id="img5" class="modal">
+            <div class="modal-content">
+                <a href="#gallery" class="close">×</a>
+                <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470">
+                <p>Majestic mountains reflecting on a crystal lake.<br><strong>Location:</strong> Lake Tahoe,
+                    USA<br><strong>Weather:</strong> Cool & refreshing<br><strong>Facilities:</strong> Boat rides,
+                    picnic spots, hiking trails.</p>
+            </div>
+        </div>
+
+        <div id="img6" class="modal">
+            <div class="modal-content">
+                <a href="#gallery" class="close">×</a>
+                <img src="https://images.unsplash.com/photo-1499084732479-de2c02d45fc4">
+                <p>Soft pink sunset sky over a calm horizon.<br><strong>Location:</strong> Maldives
+                    Seashore<br><strong>Weather:</strong> Warm & breezy<br><strong>Experiences:</strong> Beach walks,
+                    sea-view restaurants, water activities.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        © 2025 VisualWorld — All Rights Reserved
+    </footer>
+</body>
+
+</html>
